@@ -56,6 +56,7 @@ class RedditPlaceTracker(object):
 
             @param save_update:  if save_update is True, the update will be written
                                  to self.updates.
+            returns the position and color index of the pixel in the form: ((x, y), color_index)
         """
         update = json.loads(self.ws.recv())['payload']
         if save_update:
