@@ -83,9 +83,9 @@ class RedditPlaceTracker(object):
 
     def __enter__(self):
         """ So that we can use with statements (with RedditPlaceTracker() as my_var_name:...). """
-        pass
+        return self
     
-    def __exit__(self):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         """ So that we can use with statements (with RedditPlaceTracker() as my_var_name:...). """
         self.close()
         
@@ -122,15 +122,16 @@ class RedditPlaceTracker(object):
                 except websocket.WebSocketConnectionClosedException:
                     # attempt to fix broken connection
                     print "Connection closed.  Attempting to reestablish."
-                    self.ws = websocket.create_connection(auto_get_url())
+                    self.repair_connection()
+    def repair_connection(self):
+        self.ws = websocket.create_connection(auto_get_url())
                     
 
 if __name__ == '__main__':
-    """ Continuously write updates to file. """
-    
     import matplotlib.pyplot as plt
-    place = RedditPlaceTracker()
-    place.continuous_to_file("/home/tim/Downloads/reddit_place.dat", show_updates = True)
+    
+    with RedditPlaceTracker() as place:
+        print place.get_update(save_update = False)
 
     
     
